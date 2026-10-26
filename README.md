@@ -57,16 +57,18 @@ npm run unlink
 
 ## Releasing a new version
 
-To release a new version of the widget commit all your changes and run
+Changes reach `main` through pull requests only, once the `ci` and `security`
+checks are green. From a feature branch, with everything committed (regenerate
+`src/definition-schema.d.ts` with `npm run types` after a schema change):
 
-```js
-npm run types
-npm run release
+```bash
+just merge            # a pull request that releases nothing
+just release-patch    # a release pull request (release-minor for new capabilities)
 ```
 
-Note that `npm run release` bumps the patch version. For a minor or major bump use `npm run release:minor` or `npm run release:major` — do not hand-edit the version in `package.json`, since the release preflight requires a clean working tree.
-
-After the version tag has been successfully published to github, our github action kicks in and creates a release on github and publishes the release on npm as well.
+The merge of a release pull request publishes the package to npm from GitHub
+Actions (`.github/workflows/build-publish.yml`), then tags the bare version and
+creates the GitHub release. Nothing is published or tagged from a laptop.
 
 Now you need to tell the IronFlock system that a new version of the widget should be offered. You do this by executing with the new version string you created.
 
