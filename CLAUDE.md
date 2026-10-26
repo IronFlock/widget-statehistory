@@ -8,7 +8,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run build` — Production build via Vite (library mode, ES output, `echarts` externalized).
 - `npm run watch` — `vite build --watch` only, no dev server.
 - `npm run types` — Regenerate `src/definition-schema.d.ts` from `src/definition-schema.json` using `json-schema-to-typescript`. Run this whenever the JSON schema changes.
-- `npm run release` — `npm version patch`: preflight guards (on `main`, clean tree, not behind `origin/main`, generated files current, build passes), then the bump and a `dist/` rebuild (the `version` hook, so the local build registers the new tag), then commit, bare-semver tag, `git push --follow-tags`, then waits on the CI run and fails if the npm publish fails. `npm run release:minor` / `release:major` for other bumps.
+- `just lint` — what the CI gate checks besides the build: regenerating the committed generated files (`npm run types`) changes nothing. `just build` = `npm run build`.
+- `just merge` / `just release-patch` (`release-minor`, `release-major`) — pull requests into `main` from a feature branch with everything committed: a no-release one, or a release one whose merge publishes to npm in CI (`.github/workflows/build-publish.yml`), then the release GitHub App tags the bare version and creates the GitHub release. Never `npm publish`, tag or edit the version by hand.
 - `npm run link` / `npm run unlink` — Symlink this package into a sibling `../RESWARM/frontend` for local integration testing.
 
 No test runner, linter, or formatter scripts are wired up. `.prettierrc` exists but is not invoked via npm.
@@ -52,7 +53,7 @@ Vite library mode (`build.lib`, ES format, fileName `widget-statehistory`) emits
 
 ### Release flow (from README)
 
-1. Tag push triggers the workflow which runs `npm ci`, builds, and publishes via npm trusted publishing (OIDC — no `NPM_TOKEN`).
+1. `just release-patch` opens a release pull request; its merge runs `.github/workflows/build-publish.yml`: `npm ci`, build, publish via npm trusted publishing (OIDC — no `NPM_TOKEN`), then the bare-version tag and the GitHub Release.
 2. After publish, register the new version with the platform via SQL:
    ```sql
    select swarm.f_update_widget_master('{"package_name": "widget-statehistory", "version": "X.Y.Z"}'::jsonb);
