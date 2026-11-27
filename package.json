@@ -3,7 +3,7 @@
     "description": "Webcomponent widget-statehistory following open-wc recommendations",
     "license": "MIT",
     "author": "widget-statehistory",
-    "version": "1.0.28",
+    "version": "1.0.29",
     "engines": {
         "node": ">=24.9.0",
         "npm": ">=10.0.2"
@@ -27,7 +27,6 @@
     },
     "dependencies": {
         "lit": "^3.3.2",
-        "luxon": "^3.7.2",
         "tinycolor2": "^1.6.0",
         "tslib": "^2.8.1"
     },
@@ -36,7 +35,6 @@
     },
     "devDependencies": {
         "@rollup/plugin-replace": "^6.0.2",
-        "@types/luxon": "^3.7.1",
         "@types/tinycolor2": "^1.4.6",
         "json-schema-to-typescript": "^15.0.4",
         "typescript": "5.9.3",
