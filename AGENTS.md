@@ -39,7 +39,7 @@ and remaining work there when handing a task to another developer or agent.
 ## Commands
 
 - `npm run start` — Vite dev server on port 8000 serving `demo/index.html`, with `vite build --watch` running in parallel so `dist/` stays current.
-- `npm run build` — Production build via Vite (library mode, ES output, `echarts` externalized).
+- `npm run build` — Production build via Vite (library mode, ES output, `echarts` and `lit` externalized).
 - `npm run watch` — `vite build --watch` only, no dev server.
 - `npm run types` — Regenerate `src/definition-schema.d.ts` from `src/definition-schema.json` using `json-schema-to-typescript`. Run this whenever the JSON schema changes.
 - `just lint` — what the CI gate checks besides the build: regenerating the committed generated files (`npm run types`) changes nothing. `just build` = `npm run build`.
@@ -74,7 +74,7 @@ Theming: `registerTheme()` resolves the text colour as a `var(--re-text-color, <
 
 ### Rendering
 
-Uses ECharts via tree-shaken `echarts/core` plus `CustomChart`, `CanvasRenderer`, and the Title/Tooltip/Grid/DataZoom/Legend/Toolbox components. State bars are drawn with a custom `renderItem`. `echarts` is a `peerDependency` and externalized in the Rollup output (`external: [/^echarts/]`) — the host page provides it.
+Uses ECharts via tree-shaken `echarts/core` plus `CustomChart`, `CanvasRenderer`, and the Title/Tooltip/Grid/DataZoom/Legend/Toolbox components. State bars are drawn with a custom `renderItem`. `echarts` is a `peerDependency` and externalized in the Rollup output, and so is `lit` (`external: [/^lit/, /^@lit/, /^echarts/]`) — studio's import map provides one copy of each for all widgets. A state's duration in the tooltip is formatted by `formatDuration()` (`h:mm:ss`, hours unbounded, empty for a row without a readable timestamp); it replaced luxon, which was 85% of the bundle for that one call and threw on such a row.
 
 Two things to keep in mind when touching `applyData()`:
 

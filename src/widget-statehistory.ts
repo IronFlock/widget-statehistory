@@ -1,7 +1,6 @@
 import { html, css, LitElement, PropertyValueMap } from 'lit'
 import { customElement, property, state } from 'lit/decorators.js'
 import tinycolor, { ColorInput } from 'tinycolor2'
-import { Duration } from 'luxon'
 
 import * as echarts from 'echarts/core'
 import {
@@ -36,6 +35,19 @@ import { CustomSeriesOption, CustomSeriesRenderItemReturn, EChartsOption, Series
 type Theme = {
     theme_name: string
     theme_object: any
+}
+
+/**
+ * A time span as `h:mm:ss`, the hours unbounded (`72:01:01`). Empty when the
+ * span is not a finite number, which is what a row with a missing or
+ * unparseable timestamp produces.
+ */
+function formatDuration(ms: number): string {
+    if (!Number.isFinite(ms)) return ''
+    const total = Math.floor(Math.abs(ms) / 1000)
+    const pad = (n: number) => String(n).padStart(2, '0')
+    const text = `${Math.floor(total / 3600)}:${pad(Math.floor(total / 60) % 60)}:${pad(total % 60)}`
+    return ms < 0 && total > 0 ? `-${text}` : text
 }
 @customElement('widget-statehistory-versionplaceholder')
 export class WidgetStateHistory extends LitElement {
@@ -341,9 +353,9 @@ export class WidgetStateHistory extends LitElement {
                         name,
                         d.tsp,
                         data1[j + 1]?.tsp ?? maxDate,
-                        Duration.fromMillis(
+                        formatDuration(
                             (data1[j + 1]?.tsp.getTime() ?? new Date().getTime()) - d.tsp.getTime()
-                        ).toFormat('h:mm:ss')
+                        )
                     ],
                     itemStyle: {
                         normal: {
